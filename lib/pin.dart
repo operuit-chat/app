@@ -17,6 +17,10 @@ class _MyPinState extends State<MyPin> {
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+        ),
         body: Stack(
           children: [
             Container(),
@@ -53,7 +57,7 @@ class _MyPinState extends State<MyPin> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               const Text(
-                                'Sign In',
+                                'Security code',
                                 style: TextStyle(
                                     fontSize: 27, fontWeight: FontWeight.w700),
                               ),
@@ -77,10 +81,10 @@ class _MyPinState extends State<MyPin> {
                             children: [
                               TextButton(
                                 onPressed: () {
-                                  Navigator.pushNamed(context, 'register');
+                                  Navigator.pushNamed(context, 'login');
                                 },
                                 child: const Text(
-                                  'Sign Up',
+                                  'Cancel',
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                       decoration: TextDecoration.underline,

@@ -58,7 +58,7 @@ class _MyRegisterState extends State<MyRegister> {
                                     color: Colors.black,
                                   ),
                                 ),
-                                hintText: "Anzeigename",
+                                hintText: "Display name",
                                 hintStyle: const TextStyle(color: Colors.black),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
@@ -142,31 +142,9 @@ class _MyRegisterState extends State<MyRegister> {
                               )
                             ],
                           ),
-                          const SizedBox(
-                            height: 40,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pushNamed(context, 'pin');
-                                },
-                                child: const Text(
-                                  'Sign In',
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(
-                                      decoration: TextDecoration.underline,
-                                      color: Colors.black,
-                                      fontSize: 20),
-                                ),
-                                style: const ButtonStyle(),
-                              ),
-                            ],
-                          )
                         ],
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),
