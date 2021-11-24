@@ -9,7 +9,6 @@ class MyPin extends StatefulWidget {
 }
 
 class _MyPinState extends State<MyPin> {
-
   String text = '';
 
   bool isNumeric(String s) {
@@ -32,19 +31,23 @@ class _MyPinState extends State<MyPin> {
         height: 40,
         width: 40,
         decoration: BoxDecoration(
+            color: Colors.white,
             border: Border.all(color: Colors.black, width: 0),
-            borderRadius: const BorderRadius.all(Radius.circular(8))
-        ),
-        child: Center(child: Text(text[position], style: const TextStyle(color: Colors.black),)),
+            borderRadius: const BorderRadius.all(Radius.circular(8))),
+        child: Center(
+            child: Text(
+          text[position],
+          style: const TextStyle(color: Colors.black),
+        )),
       );
     } catch (e) {
       return Container(
         height: 40,
         width: 40,
         decoration: BoxDecoration(
+            color: Colors.white,
             border: Border.all(color: Colors.black, width: 0),
-            borderRadius: const BorderRadius.all(Radius.circular(8))
-        ),
+            borderRadius: const BorderRadius.all(Radius.circular(8))),
       );
     }
   }
@@ -66,7 +69,7 @@ class _MyPinState extends State<MyPin> {
           children: [
             Container(),
             Container(
-              padding: const EdgeInsets.only(left: 35, top: 130),
+              padding: const EdgeInsets.only(left: 35, top: 50),
               child: const Text(
                 'Your\nPIN',
                 style: TextStyle(color: Colors.white, fontSize: 33),
@@ -75,7 +78,7 @@ class _MyPinState extends State<MyPin> {
             SingleChildScrollView(
               child: Container(
                 padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height * 0.35),
+                    top: MediaQuery.of(context).size.height * 0.20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -83,12 +86,6 @@ class _MyPinState extends State<MyPin> {
                       margin: const EdgeInsets.only(left: 35, right: 35),
                       child: Column(
                         children: [
-                          const Text(
-                            'Security code',
-                            style: TextStyle(
-                                fontSize: 27, fontWeight: FontWeight.w700),
-                          ),
-                          const SizedBox(height: 30),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             crossAxisAlignment: CrossAxisAlignment.center,
