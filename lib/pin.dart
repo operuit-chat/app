@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:numeric_keyboard/numeric_keyboard.dart';
 
 class MyPin extends StatefulWidget {
   const MyPin({Key? key}) : super(key: key);
@@ -8,6 +9,46 @@ class MyPin extends StatefulWidget {
 }
 
 class _MyPinState extends State<MyPin> {
+
+  String text = '';
+
+  bool isNumeric(String s) {
+    return double.tryParse(s) != null;
+  }
+
+  void _onKeyboardTap(String value) {
+    setState(() {
+      if (text.length == 6) {
+        return;
+      }
+      text = text + value;
+    });
+  }
+
+  // https://github.com/huextrat/TheGorgeousOtp/blob/master/lib/pages/otp_page.dart
+  Widget otpNumberWidget(int position) {
+    try {
+      return Container(
+        height: 40,
+        width: 40,
+        decoration: BoxDecoration(
+            border: Border.all(color: Colors.black, width: 0),
+            borderRadius: const BorderRadius.all(Radius.circular(8))
+        ),
+        child: Center(child: Text(text[position], style: const TextStyle(color: Colors.black),)),
+      );
+    } catch (e) {
+      return Container(
+        height: 40,
+        width: 40,
+        decoration: BoxDecoration(
+            border: Border.all(color: Colors.black, width: 0),
+            borderRadius: const BorderRadius.all(Radius.circular(8))
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -34,7 +75,7 @@ class _MyPinState extends State<MyPin> {
             SingleChildScrollView(
               child: Container(
                 padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height * 0.5),
+                    top: MediaQuery.of(context).size.height * 0.35),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -42,25 +83,44 @@ class _MyPinState extends State<MyPin> {
                       margin: const EdgeInsets.only(left: 35, right: 35),
                       child: Column(
                         children: [
-                          TextField(
-                            style: const TextStyle(color: Colors.black),
-                            decoration: InputDecoration(
-                                fillColor: Colors.grey.shade100,
-                                filled: true,
-                                hintText: "0",
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                )),
+                          const Text(
+                            'Security code',
+                            style: TextStyle(
+                                fontSize: 27, fontWeight: FontWeight.w700),
+                          ),
+                          const SizedBox(height: 30),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              otpNumberWidget(0),
+                              otpNumberWidget(1),
+                              otpNumberWidget(2),
+                              otpNumberWidget(3),
+                              otpNumberWidget(4),
+                              otpNumberWidget(5),
+                            ],
                           ),
                           const SizedBox(height: 40),
+                          NumericKeyboard(
+                            onKeyboardTap: _onKeyboardTap,
+                            textColor: Colors.black,
+                            rightIcon: const Icon(
+                              Icons.backspace,
+                              color: Colors.black,
+                            ),
+                            rightButtonFn: () {
+                              setState(() {
+                                if (text.isEmpty) {
+                                  return;
+                                }
+                                text = text.substring(0, text.length - 1);
+                              });
+                            },
+                          ),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              const Text(
-                                'Security code',
-                                style: TextStyle(
-                                    fontSize: 27, fontWeight: FontWeight.w700),
-                              ),
                               CircleAvatar(
                                 radius: 30,
                                 backgroundColor: const Color(0xff4c505b),
