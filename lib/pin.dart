@@ -1,7 +1,3 @@
-import 'dart:convert';
-import 'dart:html';
-
-import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:numeric_keyboard/numeric_keyboard.dart';
 import 'package:operuit_flutter/api/auth.dart';
@@ -139,16 +135,27 @@ class _MyPinState extends State<MyPin> {
                                 child: IconButton(
                                     color: Colors.white,
                                     onPressed: () async {
-                                      var plaintextUsername = MyRegister.registerData["username"];
-                                      var plaintextPassword = MyRegister.registerData["password"];
-                                      var plaintextDisplayName = MyRegister.registerData["displayName"];
+                                      var plaintextUsername =
+                                          MyRegister.registerData["username"];
+                                      var plaintextPassword =
+                                          MyRegister.registerData["password"];
+                                      var plaintextDisplayName = MyRegister
+                                          .registerData["displayName"];
                                       var plaintextSalt = Auth.getRandom(16);
-                                      var password = CryptoOP.hash("$plaintextUsername$plaintextPassword$plaintextSalt");
-                                      var pin = CryptoOP.hash("$text$plaintextUsername$password$plaintextSalt");
-                                      var remotePassword = "${CryptoOP.hash("$plaintextPassword$pin")}:${CryptoOP.encrypt(plaintextUsername!, plaintextUsername, plaintextSalt)}";
-                                      var username = CryptoOP.hash(plaintextUsername);
-                                      var displayName = await CryptoOP.encrypt(pin, plaintextSalt, plaintextDisplayName!);
-                                      Auth.register(username, displayName, remotePassword);
+                                      var password = CryptoOP.hash(
+                                          "$plaintextUsername$plaintextPassword$plaintextSalt");
+                                      var pin = CryptoOP.hash(
+                                          "$text$plaintextUsername$password$plaintextSalt");
+                                      var remotePassword =
+                                          "${CryptoOP.hash("$plaintextPassword$pin")}:${CryptoOP.encrypt(plaintextUsername!, plaintextUsername, plaintextSalt)}";
+                                      var username =
+                                          CryptoOP.hash(plaintextUsername);
+                                      var displayName = await CryptoOP.encrypt(
+                                          pin,
+                                          plaintextSalt,
+                                          plaintextDisplayName!);
+                                      Auth.register(username, displayName,
+                                          remotePassword);
                                     },
                                     icon: const Icon(
                                       Icons.arrow_forward,
@@ -164,7 +171,8 @@ class _MyPinState extends State<MyPin> {
                             children: [
                               TextButton(
                                 onPressed: () {
-                                  Navigator.pushNamed(context, isRegister() ? 'register' : 'login');
+                                  Navigator.pushNamed(context,
+                                      isRegister() ? 'register' : 'login');
                                 },
                                 child: const Text(
                                   'Cancel',
