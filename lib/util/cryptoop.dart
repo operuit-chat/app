@@ -1,4 +1,4 @@
-import 'package:crypto/crypto.dart' as dartCrypto;
+import 'package:crypto/crypto.dart' as dart_crypto;
 import 'package:cryptography/cryptography.dart';
 import 'dart:convert';
 
@@ -19,7 +19,7 @@ class CryptoOP {
   }
 
   static String hash(String text) {
-    return dartCrypto.sha256.convert(utf8.encode(text)).toString();
+    return dart_crypto.sha256.convert(utf8.encode(text)).toString();
   }
 
 }

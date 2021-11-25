@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:crypto/crypto.dart';
 import 'package:operuit_flutter/util/cryptoop.dart';
 
 class Auth {
