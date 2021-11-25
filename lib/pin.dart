@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:numeric_keyboard/numeric_keyboard.dart';
 import 'package:operuit_flutter/api/auth.dart';
+import 'package:operuit_flutter/overlay/message.dart';
 import 'package:operuit_flutter/register.dart';
 import 'package:operuit_flutter/util/cryptoop.dart';
+import 'package:overlay_support/overlay_support.dart';
 
 class MyPin extends StatefulWidget {
   const MyPin({Key? key}) : super(key: key);
@@ -13,6 +15,7 @@ class MyPin extends StatefulWidget {
 
 class _MyPinState extends State<MyPin> {
   String text = '';
+  bool pinError = false;
 
   bool isRegister() {
     return MyRegister.registerData["username"]!.isNotEmpty;
@@ -42,7 +45,7 @@ class _MyPinState extends State<MyPin> {
         height: 40,
         width: 40,
         decoration: BoxDecoration(
-            color: Colors.white,
+            color: Colors.grey.shade100,
             border: Border.all(color: Colors.black, width: 0),
             borderRadius: const BorderRadius.all(Radius.circular(8))),
         child: Center(
@@ -56,8 +59,9 @@ class _MyPinState extends State<MyPin> {
         height: 40,
         width: 40,
         decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(color: Colors.black, width: 0),
+            color: pinError ? const Color(0xffffc2c2) : Colors.grey.shade100,
+            border: Border.all(
+                color: pinError ? Colors.red : Colors.black, width: 0),
             borderRadius: const BorderRadius.all(Radius.circular(8))),
       );
     }
@@ -135,6 +139,16 @@ class _MyPinState extends State<MyPin> {
                                 child: IconButton(
                                     color: Colors.white,
                                     onPressed: () async {
+                                      if (text.length != 6) {
+                                        setState(() {
+                                          pinError = true;
+                                        });
+                                        return;
+                                      } else if (pinError) {
+                                        setState(() {
+                                          pinError = false;
+                                        });
+                                      }
                                       var plaintextUsername =
                                           MyRegister.registerData["username"];
                                       var plaintextPassword =
@@ -154,8 +168,22 @@ class _MyPinState extends State<MyPin> {
                                           pin,
                                           plaintextSalt,
                                           plaintextDisplayName!);
-                                      Auth.register(username, displayName,
-                                          remotePassword);
+                                      const Auth()
+                                          .register(username, displayName,
+                                              remotePassword)
+                                          .then((value) => {
+                                                showOverlayNotification(
+                                                    (context) {
+                                                  return MessageNotification(
+                                                    onClick: () {},
+                                                    icon: Icons.send,
+                                                    title: "Response",
+                                                    message: "Code: $value",
+                                                  );
+                                                },
+                                                    duration: const Duration(
+                                                        seconds: 5))
+                                              });
                                     },
                                     icon: const Icon(
                                       Icons.arrow_forward,
