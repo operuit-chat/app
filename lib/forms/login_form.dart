@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:operuit_flutter/login.dart';
+import 'package:operuit_flutter/register.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({Key? key}) : super(key: key);
@@ -25,6 +27,7 @@ class _LoginFormState extends State<LoginForm> {
               return null;
             },
             style: const TextStyle(color: Colors.black),
+            onChanged: (value) => MyLogin.loginData["username"] = value,
             decoration: InputDecoration(
                 fillColor: Colors.grey.shade100,
                 filled: true,
@@ -45,6 +48,7 @@ class _LoginFormState extends State<LoginForm> {
             },
             style: const TextStyle(),
             obscureText: true,
+            onChanged: (value) => MyLogin.loginData["password"] = value,
             decoration: InputDecoration(
                 fillColor: Colors.grey.shade100,
                 filled: true,
@@ -70,8 +74,9 @@ class _LoginFormState extends State<LoginForm> {
                 child: IconButton(
                     color: Colors.white,
                     onPressed: () {
+                      MyRegister.registerData["username"] = "";
                       if (_formKey.currentState!.validate()) {
-                        print("valid");
+                        Navigator.pushNamed(context, 'pin');
                       }
                     },
                     icon: const Icon(

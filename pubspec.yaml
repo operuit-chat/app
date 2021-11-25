@@ -37,8 +37,9 @@ dependencies:
   numeric_keyboard: ^1.1.0
   http: ^0.13.4
   crypto: ^3.0.1
-  cryptography: ^2.0.5
   overlay_support: ^1.2.1
+  path_provider: ^2.0.7
+  steel_crypt: ^3.0.0+1
 
 dev_dependencies:
   flutter_test:

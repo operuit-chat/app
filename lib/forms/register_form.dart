@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:operuit_flutter/login.dart';
 import 'package:operuit_flutter/register.dart';
 
 class RegisterForm extends StatefulWidget {
@@ -138,6 +139,7 @@ class _RegisterFormState extends State<RegisterForm> {
                   child: IconButton(
                       color: Colors.white,
                       onPressed: () {
+                        MyLogin.loginData["username"] = "";
                         if (_formKey.currentState!.validate()) {
                           var _random = Random();
                           MyRegister.registerData["username"] = "${MyRegister.registerData["username"]}${_random.nextInt(99999)}";

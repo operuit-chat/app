@@ -29,6 +29,11 @@ class Auth extends StatelessWidget {
         body: json.decode(data), headers: _headers);
   }
 
+  Future<http.Response> _get(String path, String dataStr) {
+    return http.get(Uri.parse(_uri + path + "?" + dataStr),
+        headers: _headers);
+  }
+
   Future<int> register(String username, String displayName, String password) {
     var completer = Completer<int>();
     _post(
@@ -36,6 +41,31 @@ class Auth extends StatelessWidget {
             jsonEncode(
                 "{\"username\":\"$username\", \"displayName\":\"$displayName\", \"password\":\"$password\"}"))
         .then((value) => {completer.complete(jsonDecode(value.body)["code"])});
+    return completer.future;
+  }
+
+  Future<bool> login(String username, String password) async {
+    var completer = Completer<bool>();
+    var value = await _post(
+        'login',
+        jsonEncode(
+            "{\"username\":\"$username\", \"password\":\"$password\"}"));
+    var result = jsonDecode(value.body);
+    completer.complete(result["code"] == 200);
+    return completer.future;
+  }
+
+  Future<String> salt(String username) async {
+    var completer = Completer<String>();
+    var value = await _get(
+        'salt',
+            "username=$username");
+    var result = jsonDecode(value.body);
+    if (result["code"] == 200) {
+      completer.complete(result["message"]);
+    } else {
+      completer.complete("");
+    }
     return completer.future;
   }
 

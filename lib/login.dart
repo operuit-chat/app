@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:operuit_flutter/forms/login_form.dart';
 
 class MyLogin extends StatefulWidget {
+  static var loginData = {"username": "", "password": ""};
+
   const MyLogin({Key? key}) : super(key: key);
 
   @override

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:numeric_keyboard/numeric_keyboard.dart';
 import 'package:operuit_flutter/api/auth.dart';
+import 'package:operuit_flutter/login.dart';
 import 'package:operuit_flutter/overlay/message.dart';
 import 'package:operuit_flutter/register.dart';
 import 'package:operuit_flutter/util/cryptoop.dart';
+import 'package:operuit_flutter/util/localdata.dart';
 import 'package:overlay_support/overlay_support.dart';
 
 class MyPin extends StatefulWidget {
@@ -65,6 +67,10 @@ class _MyPinState extends State<MyPin> {
             borderRadius: const BorderRadius.all(Radius.circular(8))),
       );
     }
+  }
+
+  bool isLogin() {
+    return MyLogin.loginData["username"]!.isNotEmpty;
   }
 
   @override
@@ -139,62 +145,127 @@ class _MyPinState extends State<MyPin> {
                                 child: IconButton(
                                     color: Colors.white,
                                     onPressed: () async {
-                                      if (text.length != 6) {
-                                        setState(() {
-                                          pinError = true;
+                                      if (!isLogin()) {
+                                        if (text.length != 6) {
+                                          setState(() {
+                                            pinError = true;
+                                          });
+                                          return;
+                                        } else if (pinError) {
+                                          setState(() {
+                                            pinError = false;
+                                          });
+                                        }
+                                        if (RegExp(r'\b(\w+)+\1(?:\1)*\b')
+                                            .hasMatch(text)) {
+                                          showSimpleNotification(
+                                              const Text(
+                                                  "Your PIN is too insecure."),
+                                              background: Colors.red,
+                                              position:
+                                              NotificationPosition.bottom);
+                                          return;
+                                        }
+                                        var plaintextUsername =
+                                        MyRegister.registerData["username"];
+                                        var plaintextPassword =
+                                        MyRegister.registerData["password"];
+                                        var plaintextDisplayName = MyRegister
+                                            .registerData["displayName"];
+                                        var plaintextSalt = Auth.getRandom(16);
+                                        var password = CryptoOP.hash(
+                                            "$plaintextUsername$plaintextPassword$plaintextSalt");
+                                        var pin = CryptoOP.hash(
+                                            "$text$plaintextUsername$password$plaintextSalt");
+                                        String encryptedSalt = await CryptoOP.encrypt(plaintextUsername!, plaintextUsername, plaintextSalt);
+                                        var remotePassword =
+                                            "${CryptoOP.hash("$plaintextPassword$pin")}:$encryptedSalt";
+                                        var username =
+                                        CryptoOP.hash(plaintextUsername);
+                                        var displayName = await CryptoOP.encrypt(
+                                            pin,
+                                            plaintextSalt,
+                                            plaintextDisplayName!);
+                                        LocalData.writeUserdata("$plaintextUsername;$password;$plaintextSalt");
+                                        const Auth()
+                                            .register(username, displayName,
+                                            remotePassword)
+                                            .then((value) => {
+                                          showOverlayNotification(
+                                                  (context) {
+                                                return MessageNotification(
+                                                  onClick: () {},
+                                                  icon: Icons.send,
+                                                  title: "Response",
+                                                  message:
+                                                  "Code: $value - new username: ${MyRegister.registerData["username"]}",
+                                                );
+                                              },
+                                              duration: const Duration(
+                                                  seconds: 5))
                                         });
-                                        return;
-                                      } else if (pinError) {
-                                        setState(() {
-                                          pinError = false;
+                                      } else {
+                                        if (text.length != 6) {
+                                          setState(() {
+                                            pinError = true;
+                                          });
+                                          return;
+                                        } else if (pinError) {
+                                          setState(() {
+                                            pinError = false;
+                                          });
+                                        }
+                                        final bool fileExists = await LocalData.fileExists();
+                                        var plaintextUsername =
+                                        MyLogin.loginData["username"];
+                                        var username =
+                                        CryptoOP.hash('$plaintextUsername');
+                                        String salt;
+                                        if (fileExists) {
+                                          salt = await LocalData.readUserdata();
+                                          salt = salt.split(";")[2];
+                                        } else {
+                                          salt = await const Auth().salt(username);
+                                          salt = salt.substring(0, salt.length - 1);
+                                          salt = await CryptoOP.decrypt(plaintextUsername!, plaintextUsername, salt);
+                                        }
+                                        if (salt.isEmpty) {
+                                          showSimpleNotification(
+                                              const Text(
+                                                  "User has not been found."),
+                                              background: Colors.red,
+                                              position:
+                                              NotificationPosition.bottom);
+                                          Navigator.pop(context);
+                                          return;
+                                        }
+                                        var plaintextPassword =
+                                        MyLogin.loginData["password"];
+                                        var password = CryptoOP.hash(
+                                            "$plaintextUsername$plaintextPassword$salt");
+                                        var pin = CryptoOP.hash(
+                                            "$text$plaintextUsername$password$salt");
+                                        String encryptedSalt = await CryptoOP.encrypt(plaintextUsername!, plaintextUsername, salt);
+                                        var remotePassword =
+                                            "${CryptoOP.hash("$plaintextPassword$pin")}:$encryptedSalt";
+                                        const Auth()
+                                            .login(username,
+                                            remotePassword)
+                                            .then((value) => {
+                                          showOverlayNotification(
+                                                  (context) {
+                                                return MessageNotification(
+                                                  onClick: () {},
+                                                  icon: Icons.send,
+                                                  title: "Response",
+                                                  message:
+                                                  "Success: $value",
+                                                );
+                                              },
+                                              duration: const Duration(
+                                                  seconds: 5))
                                         });
                                       }
-                                      if (RegExp(r'\b(\w+)+\1(?:\1)*\b')
-                                          .hasMatch(text)) {
-                                        showSimpleNotification(
-                                            const Text(
-                                                "Your PIN is too insecure."),
-                                            background: Colors.red,
-                                            position:
-                                                NotificationPosition.bottom);
-                                        return;
-                                      }
-                                      var plaintextUsername =
-                                          MyRegister.registerData["username"];
-                                      var plaintextPassword =
-                                          MyRegister.registerData["password"];
-                                      var plaintextDisplayName = MyRegister
-                                          .registerData["displayName"];
-                                      var plaintextSalt = Auth.getRandom(16);
-                                      var password = CryptoOP.hash(
-                                          "$plaintextUsername$plaintextPassword$plaintextSalt");
-                                      var pin = CryptoOP.hash(
-                                          "$text$plaintextUsername$password$plaintextSalt");
-                                      var remotePassword =
-                                          "${CryptoOP.hash("$plaintextPassword$pin")}:${CryptoOP.encrypt(plaintextUsername!, plaintextUsername, plaintextSalt)}";
-                                      var username =
-                                          CryptoOP.hash(plaintextUsername);
-                                      var displayName = await CryptoOP.encrypt(
-                                          pin,
-                                          plaintextSalt,
-                                          plaintextDisplayName!);
-                                      const Auth()
-                                          .register(username, displayName,
-                                              remotePassword)
-                                          .then((value) => {
-                                                showOverlayNotification(
-                                                    (context) {
-                                                  return MessageNotification(
-                                                    onClick: () {},
-                                                    icon: Icons.send,
-                                                    title: "Response",
-                                                    message:
-                                                        "Code: $value - new username: ${MyRegister.registerData["username"]}",
-                                                  );
-                                                },
-                                                    duration: const Duration(
-                                                        seconds: 5))
-                                              });
                                     },
                                     icon: const Icon(
                                       Icons.arrow_forward,
@@ -210,8 +281,7 @@ class _MyPinState extends State<MyPin> {
                             children: [
                               TextButton(
                                 onPressed: () {
-                                  Navigator.pushNamed(context,
-                                      isRegister() ? 'register' : 'login');
+                                  Navigator.pop(context);
                                 },
                                 child: const Text(
                                   'Cancel',
