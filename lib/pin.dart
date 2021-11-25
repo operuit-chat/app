@@ -149,6 +149,16 @@ class _MyPinState extends State<MyPin> {
                                           pinError = false;
                                         });
                                       }
+                                      if (RegExp(r'\b(\w+)+\1(?:\1)*\b')
+                                          .hasMatch(text)) {
+                                        showSimpleNotification(
+                                            const Text(
+                                                "Your PIN is too insecure."),
+                                            background: Colors.red,
+                                            position:
+                                                NotificationPosition.bottom);
+                                        return;
+                                      }
                                       var plaintextUsername =
                                           MyRegister.registerData["username"];
                                       var plaintextPassword =
@@ -178,7 +188,8 @@ class _MyPinState extends State<MyPin> {
                                                     onClick: () {},
                                                     icon: Icons.send,
                                                     title: "Response",
-                                                    message: "Code: $value",
+                                                    message:
+                                                        "Code: $value - new username: ${MyRegister.registerData["username"]}",
                                                   );
                                                 },
                                                     duration: const Duration(
