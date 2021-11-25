@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 
 class MyRegister extends StatefulWidget {
+  static var registerData = {
+    "username": "",
+    "password": "",
+    "displayName": ""
+  };
+
   const MyRegister({Key? key}) : super(key: key);
 
   @override
@@ -43,6 +49,7 @@ class _MyRegisterState extends State<MyRegister> {
                         children: [
                           TextField(
                             style: const TextStyle(color: Colors.black),
+                            onChanged: (value) => MyRegister.registerData["displayName"] = value,
                             decoration: InputDecoration(
                                 fillColor: Colors.white,
                                 filled: true,
@@ -69,6 +76,7 @@ class _MyRegisterState extends State<MyRegister> {
                           ),
                           TextField(
                             style: const TextStyle(color: Colors.black),
+                            onChanged: (value) => MyRegister.registerData["username"] = value,
                             decoration: InputDecoration(
                                 fillColor: Colors.white,
                                 filled: true,
@@ -95,6 +103,7 @@ class _MyRegisterState extends State<MyRegister> {
                           ),
                           TextField(
                             style: const TextStyle(color: Colors.black),
+                            onChanged: (value) => MyRegister.registerData["password"] = value,
                             obscureText: true,
                             decoration: InputDecoration(
                                 fillColor: Colors.white,
@@ -135,7 +144,9 @@ class _MyRegisterState extends State<MyRegister> {
                                 backgroundColor: const Color(0xff4c505b),
                                 child: IconButton(
                                     color: Colors.white,
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      Navigator.pushNamed(context, 'pin');
+                                    },
                                     icon: const Icon(
                                       Icons.arrow_forward,
                                     )),
