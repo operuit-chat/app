@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:operuit_flutter/register.dart';
 
@@ -137,6 +139,8 @@ class _RegisterFormState extends State<RegisterForm> {
                       color: Colors.white,
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
+                          var _random = Random();
+                          MyRegister.registerData["username"] = "${MyRegister.registerData["username"]}${_random.nextInt(99999)}";
                           Navigator.pushNamed(context, 'pin');
                         }
                       },
