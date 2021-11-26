@@ -186,11 +186,11 @@ class _MyPinState extends State<MyPin> {
                                             pin,
                                             plaintextSalt,
                                             plaintextDisplayName!);
-                                        LocalData.writeUserdata("$plaintextUsername;$password;$plaintextSalt");
                                         var status = await const Auth()
                                             .register(username, displayName,
                                             remotePassword);
                                         if (status == 200) {
+                                          LocalData.writeUserdata("$plaintextUsername;$password;$plaintextSalt");
                                           showOverlayNotification(
                                                   (context) {
                                                 return MessageNotification(
