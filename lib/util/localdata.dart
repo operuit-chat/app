@@ -17,7 +17,9 @@ class LocalData {
 
   static Future<File> writeUserdata(String data) async {
     final file = await _localFile;
-    await file.delete();
+    if (await fileExists()) {
+      await file.delete();
+    }
     return file.writeAsString(data);
   }
 
