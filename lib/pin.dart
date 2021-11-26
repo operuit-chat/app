@@ -187,10 +187,10 @@ class _MyPinState extends State<MyPin> {
                                             plaintextSalt,
                                             plaintextDisplayName!);
                                         LocalData.writeUserdata("$plaintextUsername;$password;$plaintextSalt");
-                                        const Auth()
+                                        var status = await const Auth()
                                             .register(username, displayName,
-                                            remotePassword)
-                                            .then((value) => {
+                                            remotePassword);
+                                        if (status == 200) {
                                           showOverlayNotification(
                                                   (context) {
                                                 return MessageNotification(
@@ -198,12 +198,14 @@ class _MyPinState extends State<MyPin> {
                                                   icon: Icons.send,
                                                   title: "Response",
                                                   message:
-                                                  "Code: $value - new username: ${MyRegister.registerData["username"]}",
+                                                  "Code: $status - new username: ${MyRegister.registerData["username"]}",
                                                 );
                                               },
                                               duration: const Duration(
-                                                  seconds: 5))
-                                        });
+                                                  seconds: 5));
+                                        } else if (status == 101) { // User already exists
+                                          Navigator.pop(context);
+                                        }
                                       } else {
                                         if (text.length != 6) {
                                           setState(() {
@@ -248,10 +250,11 @@ class _MyPinState extends State<MyPin> {
                                         String encryptedSalt = await CryptoOP.encrypt(plaintextUsername!, plaintextUsername, salt);
                                         var remotePassword =
                                             "${CryptoOP.hash("$plaintextPassword$pin")}:$encryptedSalt";
-                                        const Auth()
+                                        bool success = await const Auth()
                                             .login(username,
-                                            remotePassword)
-                                            .then((value) => {
+                                            remotePassword);
+                                        if (success) {
+                                          LocalData.writeUserdata("$plaintextUsername;$password;$salt");
                                           showOverlayNotification(
                                                   (context) {
                                                 return MessageNotification(
@@ -259,12 +262,20 @@ class _MyPinState extends State<MyPin> {
                                                   icon: Icons.send,
                                                   title: "Response",
                                                   message:
-                                                  "Success: $value",
+                                                  "Success: $success",
                                                 );
                                               },
                                               duration: const Duration(
-                                                  seconds: 5))
-                                        });
+                                                  seconds: 5));
+                                        } else {
+                                          showSimpleNotification(
+                                              const Text(
+                                                  "Login failed."),
+                                              background: Colors.red,
+                                              position:
+                                              NotificationPosition.bottom);
+                                          Navigator.pop(context);
+                                        }
                                       }
                                     },
                                     icon: const Icon(
