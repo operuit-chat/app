@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:operuit_flutter/welcome.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'login.dart';
 import 'register.dart';
@@ -12,10 +13,11 @@ void main() {
         debugShowCheckedModeBanner: false,
         home: SplashScreen(),
         routes: {
-          'register': (context) => MyRegister(),
-          'login': (context) => MyLogin(),
+          'register': (context) => const MyRegister(),
+          'login': (context) => const MyLogin(),
           'splash': (context) => SplashScreen(),
-          'pin': (context) => MyPin(),
+          'pin': (context) => const MyPin(),
+          'welcome': (context) => const WelcomeScreen(),
         },
       ),
     ),

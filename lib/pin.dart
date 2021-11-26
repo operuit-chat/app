@@ -23,6 +23,10 @@ class _MyPinState extends State<MyPin> {
     return MyRegister.registerData["username"]!.isNotEmpty;
   }
 
+  bool isLogin() {
+    return MyLogin.loginData["username"]!.isNotEmpty;
+  }
+
   bool isNumeric(String s) {
     return double.tryParse(s) != null;
   }
@@ -67,10 +71,6 @@ class _MyPinState extends State<MyPin> {
             borderRadius: const BorderRadius.all(Radius.circular(8))),
       );
     }
-  }
-
-  bool isLogin() {
-    return MyLogin.loginData["username"]!.isNotEmpty;
   }
 
   @override
@@ -145,7 +145,7 @@ class _MyPinState extends State<MyPin> {
                                 child: IconButton(
                                     color: Colors.white,
                                     onPressed: () async {
-                                      if (!isLogin()) {
+                                      if (isRegister()) {
                                         if (text.length != 6) {
                                           setState(() {
                                             pinError = true;
@@ -179,7 +179,7 @@ class _MyPinState extends State<MyPin> {
                                             "$text$plaintextUsername$password$plaintextSalt");
                                         String encryptedSalt = await CryptoOP.encrypt(plaintextUsername!, plaintextUsername, plaintextSalt);
                                         var remotePassword =
-                                            "${CryptoOP.hash("$plaintextPassword$pin")}:$encryptedSalt";
+                                            "${CryptoOP.hash("$password$pin")}:$encryptedSalt";
                                         var username =
                                         CryptoOP.hash(plaintextUsername);
                                         var displayName = await CryptoOP.encrypt(
@@ -203,10 +203,18 @@ class _MyPinState extends State<MyPin> {
                                               },
                                               duration: const Duration(
                                                   seconds: 5));
+                                          Navigator.pushNamedAndRemoveUntil(context, 'welcome', (route) => true);
                                         } else if (status == 101) { // User already exists
+                                          showSimpleNotification(
+                                              const Text(
+                                                  "Unknown error. Please enter your details once again."),
+                                              background: Colors.red,
+                                              position:
+                                              NotificationPosition.bottom);
                                           Navigator.pop(context);
+                                          return;
                                         }
-                                      } else {
+                                      } else if (isLogin()) {
                                         if (text.length != 6) {
                                           setState(() {
                                             pinError = true;
@@ -249,7 +257,7 @@ class _MyPinState extends State<MyPin> {
                                             "$text$plaintextUsername$password$salt");
                                         String encryptedSalt = await CryptoOP.encrypt(plaintextUsername!, plaintextUsername, salt);
                                         var remotePassword =
-                                            "${CryptoOP.hash("$plaintextPassword$pin")}:$encryptedSalt";
+                                            "${CryptoOP.hash("$password$pin")}:$encryptedSalt";
                                         bool success = await const Auth()
                                             .login(username,
                                             remotePassword);
@@ -267,6 +275,65 @@ class _MyPinState extends State<MyPin> {
                                               },
                                               duration: const Duration(
                                                   seconds: 5));
+                                          Navigator.pushNamedAndRemoveUntil(context, 'welcome', (route) => true);
+                                        } else {
+                                          showSimpleNotification(
+                                              const Text(
+                                                  "Login failed."),
+                                              background: Colors.red,
+                                              position:
+                                              NotificationPosition.bottom);
+                                          Navigator.pop(context);
+                                        }
+                                      } else {
+                                        if (text.length != 6) {
+                                          setState(() {
+                                            pinError = true;
+                                          });
+                                          return;
+                                        } else if (pinError) {
+                                          setState(() {
+                                            pinError = false;
+                                          });
+                                        }
+                                        final bool fileExists = await LocalData.fileExists();
+                                        if (!fileExists) {
+                                          Navigator.pushReplacementNamed(context, 'login');
+                                          showSimpleNotification(
+                                              const Text(
+                                                  "Error restoring session."),
+                                              background: Colors.red,
+                                              position:
+                                              NotificationPosition.bottom);
+                                          return;
+                                        }
+                                        List<String> rawData = (await LocalData.readUserdata()).split(";");
+                                        String plaintextUsername = rawData[0];
+                                        String password = rawData[1];
+                                        String salt = rawData[2];
+                                        var pin = CryptoOP.hash(
+                                            "$text$plaintextUsername$password$salt");
+                                        String username = CryptoOP.hash(plaintextUsername);
+                                        String encryptedSalt = await CryptoOP.encrypt(plaintextUsername, plaintextUsername, salt);
+                                        var remotePassword =
+                                            "${CryptoOP.hash("$password$pin")}:$encryptedSalt";
+                                        bool success = await const Auth()
+                                            .login(username,
+                                            remotePassword);
+                                        if (success) {
+                                          showOverlayNotification(
+                                                  (context) {
+                                                return MessageNotification(
+                                                  onClick: () {},
+                                                  icon: Icons.send,
+                                                  title: "Response",
+                                                  message:
+                                                  "Success: $success",
+                                                );
+                                              },
+                                              duration: const Duration(
+                                                  seconds: 5));
+                                          Navigator.pushNamedAndRemoveUntil(context, 'welcome', (route) => true);
                                         } else {
                                           showSimpleNotification(
                                               const Text(
