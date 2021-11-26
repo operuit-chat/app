@@ -21,8 +21,8 @@ class _LoginFormState extends State<LoginForm> {
         children: <Widget>[
           TextFormField(
             validator: (value) {
-              if (value == null || value.length < 3 || value.length > 16) {
-                return 'A length between min. 3 and max. 16 characters is required.';
+              if (value == null || value.length < 3 || value.length > 22) {
+                return 'A length between min. 3 and max. 22 characters is required.';
               }
               return null;
             },
