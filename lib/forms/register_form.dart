@@ -90,7 +90,7 @@ class _RegisterFormState extends State<RegisterForm> {
             TextFormField(
               validator: (value) {
                 if (value == null ||
-                    !RegExp(r'^(?=(.*[a-z]){3,})(?=(.*[A-Z]){1,})(?=(.*[0-9]){2,})(?=(.*[!@#$%^&*()\-__+.]){1,}).{8,}$')
+                    !RegExp(r'^(?=(.*[a-z]){3,})(?=(.*[A-Z]){1,})(?=(.*[0-9]){2,})(?=(.*[!@#$%^&*()<>\\\-__+.,;]){1,}).{8,}$')
                         .hasMatch(value)) {
                   return 'Too weak.';
                 }
