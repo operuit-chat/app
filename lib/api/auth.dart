@@ -5,8 +5,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:operuit_flutter/util/cryptoop.dart';
+import 'package:overlay_support/overlay_support.dart';
 
 class Auth extends StatelessWidget {
+  static String lastRequest = "";
+
   static final _initTime = DateTime.now().millisecondsSinceEpoch;
   static const _uri = "https://operuit.shortydev.eu:2053/";
   static final Map<String, String> _headers = {
@@ -34,39 +37,57 @@ class Auth extends StatelessWidget {
         headers: _headers);
   }
 
-  Future<int> register(String username, String displayName, String password) {
-    var completer = Completer<int>();
-    _post(
+  Future<int> register(String username, String displayName, String password) async {
+    var value = await _post(
             'register',
             jsonEncode(
-                "{\"username\":\"$username\", \"displayName\":\"$displayName\", \"password\":\"$password\"}"))
-        .then((value) => {completer.complete(jsonDecode(value.body)["code"])});
-    return completer.future;
+                "{\"username\":\"$username\", \"displayName\":\"$displayName\", \"password\":\"$password\"}"));
+    if (value.statusCode != 200) {
+      lastRequest = value.headers.entries.where((element) => element.key.toLowerCase() == "cf-ray").first.value;
+      showSimpleNotification(
+          Text(
+              "An unknown error occurred, please try again.\nCF-Ray: $lastRequest"),
+          background: Colors.red,
+          position:
+          NotificationPosition.bottom);
+    }
+    var result = jsonDecode(value.body);
+    return result["code"];
   }
 
   Future<bool> login(String username, String password) async {
-    var completer = Completer<bool>();
     var value = await _post(
         'login',
         jsonEncode(
             "{\"username\":\"$username\", \"password\":\"$password\"}"));
+    if (value.statusCode != 200) {
+      lastRequest = value.headers.entries.where((element) => element.key.toLowerCase() == "cf-ray").first.value;
+      showSimpleNotification(
+          Text(
+              "An unknown error occurred, please try again.\nCF-Ray: $lastRequest"),
+          background: Colors.red,
+          position:
+          NotificationPosition.bottom);
+    }
     var result = jsonDecode(value.body);
-    completer.complete(result["code"] == 200);
-    return completer.future;
+    return result["code"] == 200;
   }
 
   Future<String> salt(String username) async {
-    var completer = Completer<String>();
     var value = await _get(
         'salt',
             "username=$username");
-    var result = jsonDecode(value.body);
-    if (result["code"] == 200) {
-      completer.complete(result["message"]);
-    } else {
-      completer.complete("");
+    if (value.statusCode != 200) {
+      lastRequest = value.headers.entries.where((element) => element.key.toLowerCase() == "cf-ray").first.value;
+      showSimpleNotification(
+          Text(
+              "An unknown error occurred, please try again.\nCF-Ray: $lastRequest"),
+          background: Colors.red,
+          position:
+          NotificationPosition.bottom);
     }
-    return completer.future;
+    var result = jsonDecode(value.body);
+    return result["code"] == 200 ? result["message"] : "";
   }
 
   @override
