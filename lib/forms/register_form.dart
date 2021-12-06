@@ -142,7 +142,8 @@ class _RegisterFormState extends State<RegisterForm> {
                         MyLogin.loginData["username"] = "";
                         if (_formKey.currentState!.validate()) {
                           var _random = Random();
-                          MyRegister.registerData["username"] = "${MyRegister.registerData["username"]}${_random.nextInt(99999)}";
+                          MyRegister.registerData["username"] =
+                              "${MyRegister.registerData["username"]}#${_random.nextInt(99999 - 10000) + 10000}";
                           Navigator.pushNamed(context, 'pin');
                         }
                       },
