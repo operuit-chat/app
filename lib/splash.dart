@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:operuit_flutter/pin.dart';
 import 'package:operuit_flutter/util/localdata.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 import 'login.dart';
 
@@ -46,6 +47,14 @@ class StartState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    IO.Socket socket = IO.io('http://localhost:8081/test');
+    socket.onConnect((_) {
+      print('connect');
+      socket.emit('msg', 'test');
+    });
+    socket.on('event', (data) => print(data));
+    socket.onDisconnect((_) => print('disconnect'));
+    socket.on('message', (_) => print(_));
     return initWidget(context);
   }
 
