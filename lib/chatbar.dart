@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'languages.dart';
+
 class ChatBar extends StatelessWidget {
   const ChatBar({Key? key}) : super(key: key);
 
@@ -10,14 +12,14 @@ class ChatBar extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       child: Row(
         children: [
-          const Flexible(
+          Flexible(
             child: TextField(
-              style: TextStyle(color: Colors.white),
+              style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 contentPadding:
-                    EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                hintText: 'Type your message here...',
-                hintStyle: TextStyle(color: Colors.white),
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                hintText: Languages.getText("chat.send"),
+                hintStyle: const TextStyle(color: Colors.white),
                 border: InputBorder.none,
               ),
             ),

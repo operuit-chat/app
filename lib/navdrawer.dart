@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:operuit_flutter/languages.dart';
 import 'package:operuit_flutter/login.dart';
 import 'package:operuit_flutter/pin.dart';
 import 'package:operuit_flutter/util/localdata.dart';
@@ -23,22 +25,22 @@ class NavDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.person),
-            title: const Text('Profile'),
+            title: Text(Languages.getText("menu.profile")),
             onTap: () => {},
           ),
           ListTile(
             leading: const Icon(Icons.settings),
-            title: const Text('Settings'),
+            title: Text(Languages.getText("menu.settings")),
             onTap: () => {},
           ),
           ListTile(
             leading: const Icon(Icons.border_color),
-            title: const Text('Feedback'),
+            title: Text(Languages.getText("menu.feedback")),
             onTap: () => {},
           ),
           ListTile(
             leading: const Icon(Icons.lock),
-            title: const Text('Lock'),
+            title: Text(Languages.getText("menu.lock")),
             onTap: () => {
               Navigator.popUntil(context, (route) => true),
               Navigator.pushNamed(context, 'pin'),
@@ -46,8 +48,15 @@ class NavDrawer extends StatelessWidget {
             },
           ),
           ListTile(
+            leading: const Icon(Icons.language),
+            title: Text(Languages.getText("menu.language")),
+            onTap: () => {
+              changeLang(context)
+            },
+          ),
+          ListTile(
             leading: const Icon(Icons.exit_to_app),
-            title: const Text('Logout'),
+            title: Text(Languages.getText("menu.logout")),
             onTap: () => {
               Navigator.popUntil(context, (route) => true),
               Navigator.pushNamed(context, 'login'),
@@ -66,5 +75,11 @@ class NavDrawer extends StatelessWidget {
 
   lock() {
     MyPin.secure = "";
+  }
+
+  changeLang(BuildContext context) {
+    Languages.current_language = Languages.current_language == "EN" ? "DE" : "EN";
+    Navigator.pop(context);
+    Navigator.pushNamed(context, "welcome");
   }
 }
