@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:numeric_keyboard/numeric_keyboard.dart';
 import 'package:operuit_flutter/api/auth.dart';
@@ -9,6 +11,9 @@ import 'package:operuit_flutter/util/localdata.dart';
 import 'package:overlay_support/overlay_support.dart';
 
 class MyPin extends StatefulWidget {
+  static String secure = "";
+  static String loggedInName = "";
+
   const MyPin({Key? key}) : super(key: key);
 
   @override
@@ -202,8 +207,11 @@ class _MyPinState extends State<MyPin> {
                                                 );
                                               },
                                               duration: const Duration(
-                                                  seconds: 5));
+                                                  seconds: 10));
                                           Navigator.pushNamedAndRemoveUntil(context, 'welcome', (route) => true);
+                                          MyPin.loggedInName = plaintextUsername;
+                                          MyRegister.registerData["username"] = "";
+                                          MyPin.secure = CryptoOP.hash(username + pin + remotePassword);
                                         } else if (status == 101) { // User already exists
                                           showSimpleNotification(
                                               const Text(
@@ -274,8 +282,10 @@ class _MyPinState extends State<MyPin> {
                                                 );
                                               },
                                               duration: const Duration(
-                                                  seconds: 5));
+                                                  seconds: 2));
                                           Navigator.pushNamedAndRemoveUntil(context, 'welcome', (route) => true);
+                                          MyPin.loggedInName = plaintextUsername;
+                                          MyPin.secure = CryptoOP.hash(username + pin + remotePassword);
                                         } else {
                                           showSimpleNotification(
                                               const Text(
@@ -334,6 +344,8 @@ class _MyPinState extends State<MyPin> {
                                               duration: const Duration(
                                                   seconds: 5));
                                           Navigator.pushNamedAndRemoveUntil(context, 'welcome', (route) => true);
+                                          MyPin.loggedInName = plaintextUsername;
+                                          MyPin.secure = CryptoOP.hash(username + pin + remotePassword);
                                         } else {
                                           showSimpleNotification(
                                               const Text(

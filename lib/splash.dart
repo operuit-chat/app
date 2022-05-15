@@ -26,7 +26,7 @@ class StartState extends State<SplashScreen> {
   }
 
   startTime() async {
-    var duration = const Duration(seconds: 2);
+    var duration = const Duration(milliseconds: 500);
     return Timer(duration, route);
   }
 
@@ -47,14 +47,6 @@ class StartState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    IO.Socket socket = IO.io('http://localhost:8081/test');
-    socket.onConnect((_) {
-      print('connect');
-      socket.emit('msg', 'test');
-    });
-    socket.on('event', (data) => print(data));
-    socket.onDisconnect((_) => print('disconnect'));
-    socket.on('message', (_) => print(_));
     return initWidget(context);
   }
 

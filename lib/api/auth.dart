@@ -34,7 +34,7 @@ class Auth extends StatelessWidget {
     }
     var contents = await HTTPClient().readResponse(value);
     var result = jsonDecode(contents);
-    return result["code"];
+    return result["responseCode"];
   }
 
   Future<bool> login(String username, String password) async {
@@ -49,8 +49,11 @@ class Auth extends StatelessWidget {
           position: NotificationPosition.bottom);
     }
     var contents = await HTTPClient().readResponse(value);
+    if (contents.startsWith("<")) {
+      return false;
+    }
     var result = jsonDecode(contents);
-    return result["code"] == 200;
+    return result["responseCode"] == 200;
   }
 
   Future<String> salt(String username) async {
@@ -65,7 +68,7 @@ class Auth extends StatelessWidget {
     }
     var contents = await HTTPClient().readResponse(value);
     var result = jsonDecode(contents);
-    return result["code"] == 200 ? result["message"] : "";
+    return result["responseCode"] == 200 ? result["message"] : "";
   }
 
   @override
